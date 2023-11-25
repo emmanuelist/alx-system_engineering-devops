@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Initialize counter variable
+counter=0
+
+# Define the loop condition
+until [ "$counter" -eq 10 ]; do
+	echo "Best School"
+
+	# Increment the counter
+	counter=$((counter + 1))
+done
