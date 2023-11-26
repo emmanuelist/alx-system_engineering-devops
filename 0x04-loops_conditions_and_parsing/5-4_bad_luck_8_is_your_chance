@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Loop from 1 to 10 and displays:
+# "bad luck" for the 4th loop iteration
+# "good luck" for the 8th loop iteration
+# "Best School" for the other iterations
 
 : <<'COMMENT'
 counter = 1
@@ -14,11 +18,6 @@ while counter <= 10:
 # Increment the counter
 	counter = counter + 1
 COMMENT
-
-# Loop from 1 to 10 and displays:
-# "bad luck" for the 4th loop iteration
-# "good luck" for the 8th loop iteration
-# "Best School" for the other iterations
 
 # Iniatialize counter variable
 counter=1
