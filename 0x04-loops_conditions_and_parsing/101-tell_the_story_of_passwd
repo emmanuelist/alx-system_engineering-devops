@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Display the content of the file `/etc/passwd`, using the `while` loop + IFS
+
+: <<'COMMENT'
+while there are lines in /etc/passwd:
+    read a line from /etc/passwd
+    extract username, group ID, home directory, command/shell, password, and additional user ID info
+    print the formatted information
+COMMENT
+
+while IFS=: read -r username password userid groupid userinfo homedir command
+do
+  echo "The user $username is part of the $groupid gang, lives in $homedir and rides $command. $userid's place is protected by the passcode $password, more info about the user here: $userinfo"
+done < /etc/passwd
