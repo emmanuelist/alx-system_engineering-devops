@@ -3,4 +3,4 @@
 
 #!/bin/bash
 
-awk '{counts[$1 FS $9]++} END{for(cc in counts){print counts[cc], cc}}' apache-access.log | sort -h -r
+awk '{print $1 " " $9}' apache-access.log | sort | uniq -c | sort -rn
