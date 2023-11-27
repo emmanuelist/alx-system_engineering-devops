@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Script that gropups vistors by IP and HTTP status code
+
+#!/bin/bash
+
+awk '{counts[$1 FS $9]++} END{for(cc in counts){print counts[cc], cc}}' apache-access.log | sort -h -r
