@@ -4,10 +4,11 @@ sudo apt-get -y update
 sudo apt-get -y install nginx
 # Create the main HTML page
 sudo sh -c 'echo "Hello World!" > /var/www/html/index.nginx-debian.html'
+# Create custom_404 page
+sudo echo -e "Ceci n'est pas une page\n" | sudo tee /var/www/html/custom_404.html > /dev/null
 # Configure redirection
 sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me {return 301 https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4;}' /etc/nginx/sites-available/default
 # Configure custom 404 page
-sudo sed -i '/^}$/i \ \n\tlocation @404 {return 404 "Ceci n'\''est pas une page\\n";}' /etc/nginx/sites-available/default
-sudo sed -i 's/=404/@404/g' /etc/nginx/sites-available/default
+sudo sed -i '/^}$/i \ \n\terror_page 400 \/custom_404.html;' /etc/nginx/sites-available/default
 # Start Nginx service
 sudo service nginx start
