@@ -17,4 +17,14 @@ sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me { return 301 https:\/\/www.yout
 sudo sed -i '/^}$/i \ \n\terror_page 404 \/custom_404.html;' /etc/nginx/sites-available/default
 
 # Start Nginx service
-sudo service nginx start
+sudo service nginx reload
+
+# Check Nginx configuration syntax
+sudo nginx -t
+
+# If the syntax is okay, reload Nginx
+if [ $? -eq 0 ]; then
+    sudo service nginx reload
+else
+    echo "Nginx configuration test failed. Please check your configuration."
+fi
