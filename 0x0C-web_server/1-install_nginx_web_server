@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
+
 # Install nginx on web-01
 sudo apt-get update
 sudo apt-get install nginx -y
+
+# Allow Nginx through UFW
 sudo ufw allow 'Nginx HTTP'
-sudo echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html
+
+# Create the main HTML page
+echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+
+# Start Nginx service
 sudo service nginx start
