@@ -1,53 +1,58 @@
 #!/usr/bin/env bash
-
 # Install and configure HAProxy load balancer
 
-set -e # Exit script on error if any command fails
+echo -e "Updating and performing some minor checks...\n"
 
-# Update and upgrade system packages
-sudo apt-get update
-sudo apt-get -y upgrade
+function install() {
+    command -v "$1" &> /dev/null
 
-# Install HAProxy
-sudo apt-get -y install haproxy
+    # Check if the command is not installed
+    if [ $? -ne 0 ]; then
+        echo -e "Installing: $1\n"
+        sudo apt-get update -y -qq && \
+            sudo apt-get install -y "$1" -qq
+        echo -e "\n"
+    else
+        echo -e "$1 is already installed.\n"
+    fi
+}
 
-# Create a backup of the original HAProxy configuration file (recommended)
-sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
+install haproxy  # Install HAProxy
 
-# Configure HAProxy
-cat <<EOF >> /etc/haproxy/haproxy.cfg
-# Global settings
-global
-  log /dev/log local0 notice
-  maxconn 2000
-  user haproxy
-  group haproxy
-  daemon
+echo -e "\nSetting up some minor configurations...\n"
 
-# Default settings for frontends and backends
+# Backup the default server config file
+sudo cp /etc/haproxy/haproxy.cfg haproxy_default.backup
+
+server_config=\
+"
 defaults
   mode http
-  option httplog
-  option dontlognull
-  timeout connect 5s
-  timeout client 10s
-  timeout server 30s
+  timeout client 15s
+  timeout connect 10s
+  timeout server 15s
+  timeout http-request 10s
 
-# Frontend configuration
 frontend haproxy_balancer
-  bind *:80
-  default_backend webservers
+    bind *:80
+    default_backend webservers
 
-# Backend configuration
 backend webservers
-  balance roundrobin
-  server 183438-web-01 54.173.0.235:80 check
-  server 183438-web-02 18.234.249.203:80 check
-EOF
+    balance roundrobin
+    server 183438-web-01 54.173.0.235:80 check
+    server 183438-web-02 18.234.249.203:80 check
+"
 
-# Restart HAProxy service
-sudo systemctl restart haproxy
+echo "$server_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
 
-# Print information about the configured servers
-echo "HAProxy configured successfully."
-echo "Configured servers: [web-01, web-02]"
+# Enable HAProxy to be started by init script
+echo "ENABLED=1" | sudo dd status=none of=/etc/default/haproxy
+
+echo "Configuration complete - Round-robin load balancing enabled on web-01 & web-02"
+
+# Check if HAProxy is running and start or restart accordingly
+if [ "$(pgrep -c haproxy)" -le 0 ]; then
+    sudo service haproxy start
+else
+    sudo service haproxy restart
+fi
