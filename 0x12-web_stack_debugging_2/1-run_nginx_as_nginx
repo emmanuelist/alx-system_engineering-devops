@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Fixes the issue with the server
+chmod 644 /etc/nginx/nginx.conf
+# Modify nginx configuration to run as nginx user
+sed -i 's/user www-data;/user nginx;/g' /etc/nginx/nginx.conf
+
+# Modify nginx configuration to listen on port 8080
+sed -i 's/listen 80;/listen 8080;/g' /etc/nginx/sites-available/default
+pkill apache2
+su nginx -s /bin/bash -c 'service nginx restart'
