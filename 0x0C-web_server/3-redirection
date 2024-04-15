@@ -14,8 +14,9 @@ sudo sed -i '/^}$/i \ \n\tlocation \/redirect_me { return 301 https:\/\/www.yout
 sudo nginx -t
 
 # If the syntax is okay, restart Nginx
-if [ $? -eq 0 ]; then
-    sudo service nginx restart
+# Test Nginx configuration
+if ! nginx -t; then
+  echo "Nginx configuration test failed. Please check your configuration."
 else
-    echo "Nginx configuration test failed. Please check your configuration."
+  sudo service nginx restart
 fi
