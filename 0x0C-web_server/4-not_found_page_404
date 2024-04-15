@@ -23,8 +23,9 @@ sudo service nginx reload
 sudo nginx -t
 
 # If the syntax is okay, reload Nginx
-if [ $? -eq 0 ]; then
-    sudo service nginx reload
+if sudo nginx -t; then
+    # If the syntax is okay, restart Nginx
+    sudo service nginx restart
 else
     echo "Nginx configuration test failed. Please check your configuration."
 fi
